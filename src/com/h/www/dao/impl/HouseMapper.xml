@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h.www.dao.HouseMapper">
+	<resultMap id="BaseResultMap" type="com.h.www.entity.House">
+		<id column="houseid" jdbcType="INTEGER" property="houseid" />
+		<result column="housezorn" jdbcType="INTEGER" property="housezorn" />
+		<result column="housebuilding" jdbcType="INTEGER" property="housebuilding" />
+		<result column="houselevel" jdbcType="INTEGER" property="houselevel" />
+		<result column="houseroomnum" jdbcType="INTEGER" property="houseroomnum" />
+		<result column="housesize" jdbcType="DOUBLE" property="housesize" />
+		<result column="ishouseenpty" jdbcType="BIT" property="ishouseenpty" />
+	</resultMap>
+	<resultMap id="House_HouseDept" type="com.h.www.entity.House">
+		<id column="houseid" jdbcType="INTEGER" property="houseid" />
+		<result column="housezorn" jdbcType="INTEGER" property="housezorn" />
+		<result column="housebuilding" jdbcType="INTEGER" property="housebuilding" />
+		<result column="houselevel" jdbcType="INTEGER" property="houselevel" />
+		<result column="houseroomnum" jdbcType="INTEGER" property="houseroomnum" />
+		<result column="housesize" jdbcType="DOUBLE" property="housesize" />
+		<result column="ishouseenpty" jdbcType="BIT" property="ishouseenpty" />
+		<association property="houseDept" javaType="com.h.www.entity.HouseDept"
+			column="houseid" select="com.h.www.dao.HouseDeptMapper.selectByHouseId" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		houseid, housezorn, housebuilding, houselevel,
+		houseroomnum, housesize,
+		ishouseenpty
+	</sql>
+
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from t_house
+		where
+		houseid = #{houseid,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.h.www.entity.House">
+		insert into t_house (houseid,
+		housezorn, housebuilding,
+		houselevel, houseroomnum, housesize,
+		ishouseenpty)
+		values (#{houseid,jdbcType=INTEGER},
+		#{housezorn,jdbcType=INTEGER},
+		#{housebuilding,jdbcType=INTEGER},
+		#{houselevel,jdbcType=INTEGER}, #{houseroomnum,jdbcType=INTEGER},
+		#{housesize,jdbcType=DOUBLE},
+		#{ishouseenpty,jdbcType=BIT})
+	</insert>
+
+	<select id="selectByHouseId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_house
+		where houseid = #{houseid,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectAll" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_house
+	</select>
+
+	<select id="selectHouseAndHouseDept" resultMap="House_HouseDept">
+		select
+		<include refid="Base_Column_List" />
+		from t_house
+	</select>
+	
+	<select id="selectSellPercent" resultType="Double">
+		SELECT (SELECT
+		COUNT(houseid) FROM t_house WHERE
+		ishouseenpty=1)/COUNT(houseid) FROM
+		t_house
+	</select>
+
+	<select id="selectUnSellPercent" resultType="Double">
+		SELECT (SELECT
+		COUNT(houseid) FROM t_house WHERE
+		ishouseenpty=0)/COUNT(houseid) FROM
+		t_house
+	</select>
+
+	<select id="selectCountAll" resultType="Integer">
+		SELECT COUNT(houseid)
+		FROM
+		t_house
+	</select>
+
+	<select id="selectHouseIdByFour" resultType="Integer">
+		SELECT houseid
+		FROM
+		t_house
+		WHERE
+		housezorn =#{housezorn,jdbcType=INTEGER} AND
+		housebuilding
+		= #{housebuilding,jdbcType=INTEGER} AND
+		houselevel =
+		#{houselevel,jdbcType=INTEGER} AND
+		houseroomnum =
+		#{houseroomnum,jdbcType=INTEGER} LIMIT 1
+	</select>
+
+	<update id="updateById" parameterType="com.h.www.entity.House">
+		update t_house
+		set
+		housezorn = #{housezorn,jdbcType=INTEGER},
+		housebuilding =
+		#{housebuilding,jdbcType=INTEGER},
+		houselevel =
+		#{houselevel,jdbcType=INTEGER},
+		houseroomnum =
+		#{houseroomnum,jdbcType=INTEGER},
+		housesize =
+		#{housesize,jdbcType=DOUBLE},
+		ishouseenpty =
+		#{ishouseenpty,jdbcType=BIT}
+		where houseid =
+		#{houseid,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateHouseSetHouseEmpty" parameterType="com.h.www.entity.House">
+		update
+		t_house
+		set
+		ishouseenpty=1
+		WHERE houseid=#{houseid,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateHouseSetHouseNotEmpty" parameterType="com.h.www.entity.House">
+		update
+		t_house
+		set
+		ishouseenpty=0
+		WHERE houseid=#{houseid,jdbcType=INTEGER}
+	</update>
+
+</mapper>

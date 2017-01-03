@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h.www.dao.GroupMapper">
+	<resultMap id="BaseResultMap" type="com.h.www.entity.Group">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="group_name" jdbcType="VARCHAR" property="groupName" />
+		<result column="function_id" jdbcType="VARCHAR" property="functionId" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, uid, group_name, function_id
+	</sql>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from t_group
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.h.www.entity.Group">
+		insert into t_group (id, uid, group_name,
+		function_id)
+		values (#{id,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER},
+		#{groupName,jdbcType=VARCHAR},
+		#{functionId,jdbcType=VARCHAR})
+	</insert>
+
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_group
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectByAdminId" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM `t_group` WHERE uid=#{uid}
+	</select>
+
+	<update id="updateById" parameterType="com.h.www.entity.Group">
+		update t_group
+		set uid = #{uid,jdbcType=INTEGER},
+		group_name = #{groupName,jdbcType=VARCHAR},
+		function_id = #{functionId,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+</mapper>

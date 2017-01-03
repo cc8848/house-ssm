@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h.www.dao.UserMapper">
+
+	<resultMap id="BaseResultMap" type="com.h.www.entity.User">
+		<id column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="uname" jdbcType="VARCHAR" property="uname" />
+		<result column="uindentyid" jdbcType="VARCHAR" property="uindentyid" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="uborndate" jdbcType="TIMESTAMP" property="uborndate" />
+		<result column="uillness" jdbcType="VARCHAR" property="uillness" />
+		<result column="user_describ" jdbcType="VARCHAR" property="userDescrib" />
+		<result column="houseid" jdbcType="INTEGER" property="houseid" />
+		<result column="ishouse_owner" jdbcType="BIT" property="ishouseOwner" />
+	</resultMap>
+
+	<resultMap id="User_House_Dept" type="com.h.www.entity.User">
+		<id column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="uname" jdbcType="VARCHAR" property="uname" />
+		<result column="uindentyid" jdbcType="VARCHAR" property="uindentyid" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="uborndate" jdbcType="TIMESTAMP" property="uborndate" />
+		<result column="uillness" jdbcType="VARCHAR" property="uillness" />
+		<result column="user_describ" jdbcType="VARCHAR" property="userDescrib" />
+		<result column="houseid" jdbcType="INTEGER" property="houseid" />
+		<result column="ishouse_owner" jdbcType="BIT" property="ishouseOwner" />
+		<association property="house" column="houseid"
+			javaType="com.h.www.entity.House" select="com.h.www.dao.HouseMapper.selectByHouseId" />
+		<association property="houseDept" javaType="com.h.www.entity.HouseDept"
+			column="houseid" select="com.h.www.dao.HouseDeptMapper.selectByHouseId" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		uid, uname, uindentyid ,phone, uborndate, uillness,
+		user_describ,
+		houseid,
+		ishouse_owner
+	</sql>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from t_user
+		where
+		uid = #{uid,jdbcType=INTEGER}
+	</delete>
+
+
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		where uid = #{uid,jdbcType=INTEGER}
+	</select>
+
+	<!-- 通过上诉select语句得到用户，在用用户查询houseid也行 -->
+	<!-- <select id="selectHouseIdByUserID" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		houseid
+		from t_user
+		where uid = #{uid,jdbcType=INTEGER}
+	</select> -->
+
+	<select id="selectUserAndHouseAndDept" resultMap="User_House_Dept">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		t_user
+	</select>
+
+	<select id="selectUserAndHouseAndDeptById" resultMap="User_House_Dept">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		t_user WHERE uid = #{uid,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectByHouseid" resultMap="User_House_Dept">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+		WHERE
+		houseid= #{houseid,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectAllBasic" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_user
+	</select>
+
+	<insert id="insert" parameterType="com.h.www.entity.User">
+		insert into t_user (uid,
+		uname, uindentyid,
+		uborndate, uillness, user_describ,
+		houseid,
+		ishouse_owner)
+		values (#{uid,jdbcType=INTEGER},
+		#{uname,jdbcType=VARCHAR},
+		#{uindentyid,jdbcType=VARCHAR},
+		#{uborndate,jdbcType=TIMESTAMP}, #{uillness,jdbcType=VARCHAR},
+		#{userDescrib,jdbcType=VARCHAR},
+		#{houseid,jdbcType=INTEGER},
+		#{ishouseOwner,jdbcType=BIT})
+	</insert>
+
+
+	<update id="updateById" parameterType="com.h.www.entity.User">
+		update t_user
+		set uname =
+		#{uname,jdbcType=VARCHAR},
+		uindentyid = #{uindentyid,jdbcType=VARCHAR},
+		uborndate = #{uborndate,jdbcType=TIMESTAMP},
+		uillness =
+		#{uillness,jdbcType=VARCHAR},
+		user_describ =
+		#{userDescrib,jdbcType=VARCHAR},
+		houseid =
+		#{houseid,jdbcType=INTEGER},
+		ishouse_owner =
+		#{ishouseOwner,jdbcType=BIT}
+		where uid =
+		#{uid,jdbcType=INTEGER}
+	</update>
+</mapper>

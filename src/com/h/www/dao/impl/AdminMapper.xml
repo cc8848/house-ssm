@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h.www.dao.AdminMapper">
+	<!-- Admin表基本资料 -->
+	<resultMap id="BaseResultMap" type="com.h.www.entity.Admin">
+		<id column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="username" jdbcType="VARCHAR" property="username" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="last_login_time" property="lastLoginTime" />
+		<result column="last_login_ip" property="lastLoginIp"/>
+	</resultMap>
+
+	<!-- Admin和Group表联合的资料 -->
+	<resultMap id="Admin_Group" type="com.h.www.entity.Admin">
+		<id column="uid" jdbcType="INTEGER" property="uid" />
+		<result column="username" jdbcType="VARCHAR" property="username" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="last_login_time" property="lastLoginTime" />
+		<result column="last_login_ip" property="lastLoginIp"/>
+		<association property="group" javaType="com.h.www.entity.Group">
+			<id column="id" jdbcType="INTEGER" property="id" />
+			<result column="uid" jdbcType="INTEGER" property="uid" />
+			<result column="group_name" jdbcType="VARCHAR" property="groupName" />
+			<result column="function_id" jdbcType="VARCHAR" property="functionId" />
+		</association>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		uid, username, password, phone,last_login_time,last_login_ip
+	</sql>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from t_admin
+		where
+		uid = #{uid,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.h.www.entity.Admin">
+		insert into t_admin (uid,
+		username, password,
+		phone)
+		values
+		(#{uid,jdbcType=INTEGER},
+		#{username,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR})}
+	</insert>
+
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_admin
+		where uid = #{uid,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectByNameAndPwd" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_admin
+		where username = #{name,jdbcType=VARCHAR} AND
+		password=#{pwd,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectAdminAndGroupByAdminId" resultMap="Admin_Group">
+		SELECT
+		a.uid,a.username,a.`password`,a.phone,a.last_login_time,a.last_login_ip,
+		g.id,g.uid,
+		g.group_name,g.function_id
+		FROM
+		t_admin AS a
+		INNER JOIN t_group AS g ON
+		a.uid = g.uid
+		WHERE a.uid =#{uid}
+	</select>
+
+	<update id="update" parameterType="com.h.www.entity.Admin">
+		update t_admin
+		set username =
+		#{username,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		phone = #{phone,jdbcType=VARCHAR},
+		last_login_time=#{lastLoginTime}
+		where uid = #{uid,jdbcType=INTEGER}
+	</update>
+
+	<update id="updateLoginTimeAndLoginIp" parameterType="com.h.www.entity.Admin">
+		UPDATE t_admin SET
+		last_login_time=CURRENT_TIMESTAMP(),last_login_ip=#{lastLoginIp} WHERE uid =
+		#{uid,jdbcType=INTEGER}
+	</update>
+
+</mapper>

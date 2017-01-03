@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.h.www.dao.FunctionMapper">
+	<resultMap id="BaseResultMap" type="com.h.www.entity.Function">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="fun_name" jdbcType="VARCHAR" property="funName" />
+		<result column="fun_url" jdbcType="VARCHAR" property="funUrl" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, fun_name, fun_url
+	</sql>
+
+	<delete id="deleteById" parameterType="java.lang.Integer">
+		delete from t_function
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<insert id="insert" parameterType="com.h.www.entity.Function">
+		insert into t_function (id,
+		fun_name, fun_url
+		)
+		values (#{id,jdbcType=INTEGER},
+		#{funName,jdbcType=VARCHAR},
+		#{funUrl,jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<select id="selectById" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from t_function
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+	<select id="selectFunctionListByFunctionId"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		t_function
+		WHERE id IN
+		<foreach collection="funlist" item="item" index="index" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+
+	<update id="updateById" parameterType="com.h.www.entity.Function">
+		update t_function
+		set
+		fun_name = #{funName,jdbcType=VARCHAR},
+		fun_url =
+		#{funUrl,jdbcType=VARCHAR}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>
